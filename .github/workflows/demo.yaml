@@ -1,0 +1,33 @@
+name: Review Github Action B22
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  pull:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Checkout SCM
+      uses: actions/checkout@v4 
+      
+    - name: Build Docker Image
+      run: echo "docker build -t testing:1.0"
+
+    - name: Test
+      run: echo "test"
+
+    - name: Push Image
+      run: echo "push"
+
+    - name: Pull Image
+      run: echo "pull"
+
+    - name: Deploy 
+      run: echo "Deploy"
