@@ -10,7 +10,7 @@ jobs:
 
   CI:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest #ubuntu 24.10
 
     steps:
     
@@ -18,14 +18,11 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Build IMage
-      run: docker build -t alvindra/literature-backend:staging .
-
-    - name: Build IMage
-      run: docker build -t alvindra/literature-backend:staging .
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/literature-backend:staging .
 
     - name: Test
       run: |
-        docker run -d --name test -p 5000:5000 alvindra/literature-backend:staging
+        docker run -d --name test -p 5000:5000 ${{ secrets.DOCKERHUB_USERNAME }}/literature-backend:staging
         sleep 10
         curl localhost:5000
 
@@ -34,3 +31,25 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Push IMage
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/literature-backend:staging
+
+  CD:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Deploy
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/literature-backend:staging
+            cd compose/literature-backend
+            docker compose down
+            docker compose up -d
