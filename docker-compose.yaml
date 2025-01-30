@@ -1,7 +1,7 @@
 services:
 
-  be:
-    container_name: be-test
-    image: test
+  literature-be:
+    container_name: literature-be-staging
+    image: alvindra/literature-backend:staging
     ports:
       - 5000:5000
